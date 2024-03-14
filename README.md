@@ -22,3 +22,9 @@ HTML:
     </body>
 </html>
 ```
+
+## Returning the result of a Python expression
+```javascript
+answer = (await pyodidePromise).runPython("int('101010', 2)");
+console.log("Answer is:", answer);
+```
