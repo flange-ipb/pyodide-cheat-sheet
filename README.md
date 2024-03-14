@@ -24,7 +24,38 @@ HTML:
 ```
 
 ## Returning the result of a Python expression
+JavaScript:
 ```javascript
 answer = (await pyodidePromise).runPython("int('101010', 2)");
 console.log("Answer is:", answer);
+```
+
+## Loading a Python module and binding a function
+Python (*module.py*):
+```python
+def greeting(name="unknown person"):
+    print(f"Hello {name}!")
+```
+JavaScript:
+```javascript
+const pyodidePromise = startPyodide();
+
+async function startPyodide() {
+    const pyodide = await loadPyodide();
+    await loadPyModule("module.py", pyodide)
+    return pyodide;
+}
+
+async function loadPyModule(name, pyodide) {
+    const response = await fetch(name);
+    const code = await response.text();
+    return pyodide.runPythonAsync(code);
+}
+
+async function greet() {
+    const greetingFunction = (await pyodidePromise).runPython("greeting");
+    greetingFunction("John Doe");
+    greetingFunction();
+}
+greet();
 ```
