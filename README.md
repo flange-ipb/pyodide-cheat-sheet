@@ -16,6 +16,7 @@ A collection of useful code snippets for application development with [Pyodide](
   * [Download files from the file system](#download-files-from-the-file-system)
 * [Plotting](#plotting)
   * [matplotlib](#matplotlib)
+  * [plotly (not working)](#plotly-not-working)
 
 ## Loading Pyodide and running Python code
 HTML:
@@ -379,3 +380,5 @@ def render_plot(container, plot_html):
     container.appendChild(document_fragment)
     container.style = "width: 100%; height: 350px; overflow-y: scroll;"
 ```
+
+Drops out with `ReferenceError: Plotly is not defined`. :cry:
