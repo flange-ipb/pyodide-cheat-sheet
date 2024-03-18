@@ -36,6 +36,7 @@ Python (*module.py*):
 def greeting(name="unknown person"):
     print(f"Hello {name}!")
 ```
+
 JavaScript:
 ```javascript
 const pyodidePromise = startPyodide();
@@ -61,37 +62,6 @@ greet();
 ```
 
 Alternative: You can also [fetch and unpack an entire archive to the in-browser file system](https://pyodide.org/en/stable/usage/faq.html#how-can-i-load-external-files-in-pyodide) and [apply `pyodide.pyimport()`](https://pyodide.org/en/stable/usage/loading-custom-python-code.html#loading-then-importing-python-code).
-
-## Interaction with the DOM (Document Object Model)
-This is very similar to [how it's done in JavaScript](https://www.w3schools.com/js/js_htmldom.asp) with the `document` object.
-
-Python:
-```python
-from js import document
-
-
-def hello_world():
-    h1 = document.createElement("h1")
-    h1.innerText = "Hello World!"
-    h1.style.color = "green"
-    document.body.appendChild(h1)
-```
-
-## Interaction with the BOM (Browser Object Model)
-This is very similar to [how it's done in JavaScript](https://www.w3schools.com/js/js_window.asp) with the `window` object.
-
-Python:
-```python
-from js import window
-
-
-def do_something():
-    location = window.location.href
-    width = window.screen.width
-    height = window.screen.height
-
-    window.alert(f"Welcome to {location}! Your window size is {width}x{height}.")
-```
 
 ## Loading dependencies
 Pyodide offers a lightweight package installer called *micropip* that supports loading of [packages built in Pyodide](https://pyodide.org/en/stable/usage/packages-in-pyodide.html) and pure Python wheels from PyPI (file name ends with `-py3-none-any.whl`).
@@ -148,4 +118,35 @@ def serialize_graph():
     g.add((alice, FOAF.knows, bob))
 
     return g.serialize()
+```
+
+## Interaction with the DOM (Document Object Model)
+This is very similar to [how it's done in JavaScript](https://www.w3schools.com/js/js_htmldom.asp) with the `document` object.
+
+Python:
+```python
+from js import document
+
+
+def hello_world():
+    h1 = document.createElement("h1")
+    h1.innerText = "Hello World!"
+    h1.style.color = "green"
+    document.body.appendChild(h1)
+```
+
+## Interaction with the BOM (Browser Object Model)
+This is very similar to [how it's done in JavaScript](https://www.w3schools.com/js/js_window.asp) with the `window` object.
+
+Python:
+```python
+from js import window
+
+
+def do_something():
+    location = window.location.href
+    width = window.screen.width
+    height = window.screen.height
+
+    window.alert(f"Welcome to {location}! Your window size is {width}x{height}.")
 ```
