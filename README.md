@@ -92,3 +92,60 @@ def do_something():
 
     window.alert(f"Welcome to {location}! Your window size is {width}x{height}.")
 ```
+
+## Loading dependencies
+Pyodide offers a lightweight package installer called *micropip* that supports loading of [packages built in Pyodide](https://pyodide.org/en/stable/usage/packages-in-pyodide.html) and pure Python wheels from PyPI (file name ends with `-py3-none-any.whl`).
+
+JavaScript:
+```javascript
+const pyodidePromise = startPyodide();
+
+async function startPyodide() {
+    const pyodide = await loadPyodide();
+
+    await pyodide.loadPackage("micropip");
+    const micropip = pyodide.pyimport("micropip");
+    await micropip.install(["numpy", "rdflib"]);
+
+    await loadPyModule("module.py", pyodide);
+    return pyodide;
+}
+
+async function loadPyModule(name, pyodide) {
+    const response = await fetch(name);
+    const code = await response.text();
+    return pyodide.runPythonAsync(code);
+}
+
+async function doSomething() {
+    (await pyodidePromise).runPython("calc_det")();
+    graphInTurtleFormat = (await pyodidePromise).runPython("serialize_graph")();
+    console.log(graphInTurtleFormat);
+}
+doSomething();
+```
+
+Python (*module.py*):
+```python
+import numpy as np
+from rdflib import Graph, URIRef, Literal
+from rdflib.namespace import FOAF
+
+
+def calc_det():
+    a = np.array([[1, 2], [3, 4]])
+    print(f"Determinant is {np.linalg.det(a)}")
+
+
+def serialize_graph():
+    g = Graph()
+
+    alice = URIRef("http://example.org/alice")
+    bob = URIRef("http://example.org/bob")
+
+    g.add((alice, FOAF.name, Literal("Alice")))
+    g.add((bob, FOAF.name, Literal("Bob")))
+    g.add((alice, FOAF.knows, bob))
+
+    return g.serialize()
+```
