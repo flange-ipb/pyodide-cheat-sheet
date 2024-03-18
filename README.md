@@ -42,7 +42,7 @@ const pyodidePromise = startPyodide();
 
 async function startPyodide() {
     const pyodide = await loadPyodide();
-    await loadPyModule("module.py", pyodide)
+    await loadPyModule("module.py", pyodide);
     return pyodide;
 }
 
@@ -58,4 +58,37 @@ async function greet() {
     greetingFunction();
 }
 greet();
+```
+
+Alternative: You can also [fetch and unpack an entire archive to the in-browser file system](https://pyodide.org/en/stable/usage/faq.html#how-can-i-load-external-files-in-pyodide) and [apply `pyodide.pyimport()`](https://pyodide.org/en/stable/usage/loading-custom-python-code.html#loading-then-importing-python-code).
+
+## Interaction with the DOM (Document Object Model)
+This is very similar to [how it's done in JavaScript](https://www.w3schools.com/js/js_htmldom.asp) with the `document` object.
+
+Python:
+```python
+from js import document
+
+
+def hello_world():
+    h1 = document.createElement("h1")
+    h1.innerText = "Hello World!"
+    h1.style.color = "green"
+    document.body.appendChild(h1)
+```
+
+## Interaction with the BOM (Browser Object Model)
+This is very similar to [how it's done in JavaScript](https://www.w3schools.com/js/js_window.asp) with the `window` object.
+
+Python:
+```python
+from js import window
+
+
+def do_something():
+    location = window.location.href
+    width = window.screen.width
+    height = window.screen.height
+
+    window.alert(f"Welcome to {location}! Your window size is {width}x{height}.")
 ```
