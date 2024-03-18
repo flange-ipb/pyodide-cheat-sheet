@@ -14,6 +14,8 @@ A collection of useful code snippets for application development with [Pyodide](
 * [File system](#file-system)
   * [Upload files to the file system](#upload-files-to-the-file-system)
   * [Download files from the file system](#download-files-from-the-file-system)
+* [Plotting](#plotting)
+  * [matplotlib](#matplotlib)
 
 ## Loading Pyodide and running Python code
 HTML:
@@ -331,4 +333,49 @@ def plot(target):
     ax.plot([1, 2, 3, 4], [1, 4, 2, 3])
 
     plt.show()
+```
+
+### plotly (not working)
+Load *plotly* and *pandas* via micropip.
+
+HTML:
+```html
+<div id="plotTarget"></div>
+```
+
+JavaScript:
+```javascript
+async function plot() {
+    (await pyodidePromise).runPython("plot")("plotTarget");
+}
+plot();
+```
+
+Python:
+```python
+from js import document
+import plotly.express as px
+
+
+def plot(target):
+    plot_output = document.getElementById(target)
+
+    fig = px.bar(x=["a", "b", "c"], y=[1, 3, 2])
+    fig_html = fig.to_html(
+        include_plotlyjs=False,
+        full_html=False,
+        default_height='350px'
+    )
+    render_plot(plot_output, fig_html)
+
+
+#  from https://codepen.io/jmsmdy/pen/MWpdjVZ
+def render_plot(container, plot_html):
+    range = document.createRange()
+    range.selectNode(container)
+    document_fragment = range.createContextualFragment(plot_html)
+    while container.hasChildNodes():
+        container.removeChild(container.firstChild)
+    container.appendChild(document_fragment)
+    container.style = "width: 100%; height: 350px; overflow-y: scroll;"
 ```
