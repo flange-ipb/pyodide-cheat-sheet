@@ -150,3 +150,67 @@ def do_something():
 
     window.alert(f"Welcome to {location}! Your window size is {width}x{height}.")
 ```
+
+## Type translations between JavaScript and Python
+### JavaScript to Python (aka what Python functions receive via parameters)
+* immutable types: see [implicit conversions](https://pyodide.org/en/stable/usage/type-conversions.html#javascript-to-python)
+* mutable types: see [explicit conversion of proxies](https://pyodide.org/en/stable/usage/type-conversions.html#type-translations-jsproxy-to-py)
+
+#### Example
+```javascript
+async function doSomething() {
+    array = ["a", "b", "c", "d"];
+    console.log("Array before: ", array);
+    (await pyodidePromise).runPython("change_array")("1234", 42, array);
+    console.log("Array after: ", array);
+
+    obj = {
+        data: "Hello World",
+        log: (s) => console.log(s),
+    };
+    (await pyodidePromise).runPython("call_function")(obj);
+}
+doSomething();
+```
+
+Python:
+```python
+def change_array(s: str, i: int, array: list):
+    print(f"{s=} {i=} {array=}")
+
+    array[2] = i
+    array.append(s)
+
+
+def call_function(obj):
+    obj.log(obj.data)
+```
+
+### Python to JavaScript (aka what Python functions return)
+* immutable types: see [implicit conversions](https://pyodide.org/en/stable/usage/type-conversions.html#python-to-javascript)
+* mutable types: see [explicit conversion of proxies](https://pyodide.org/en/stable/usage/type-conversions.html#type-translations-pyproxy-to-js)
+
+#### Example for explicit conversion (array)
+```javascript
+async function doSomething() {
+    proxy = (await pyodidePromise).runPython("create_py_dict")();
+    console.log("Map from create_py_dict(): ", proxy.toJs());
+
+    map = (await pyodidePromise).runPython("create_js_map")();
+    console.log("Map from create_js_map(): ", map);
+}
+doSomething();
+```
+
+Python:
+```python
+from pyodide.ffi import to_js
+
+
+def create_py_dict():
+    return {i : i*i for i in range(10)}
+
+
+def create_js_map():
+    return to_js({i : i * i * i for i in range(10)})
+```
