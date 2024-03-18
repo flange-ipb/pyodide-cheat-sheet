@@ -1,6 +1,20 @@
 # pyodide-cheat-sheet
 A collection of useful code snippets for application development with [Pyodide](https://pyodide.org).
 
+## Table of Contents
+* [Loading Pyodide and running Python code](#loading-pyodide-and-running-python-code)
+* [Returning the result of a Python expression](#returning-the-result-of-a-python-expression)
+* [Loading a Python module and binding a function](#loading-a-python-module-and-binding-a-function)
+* [Loading dependencies](#loading-dependencies)
+* [Interaction with the DOM (Document Object Model)](#interaction-with-the-dom-document-object-model)
+* [Interaction with the BOM (Browser Object Model)](#interaction-with-the-bom-browser-object-model)
+* [Type translations between JavaScript and Python](#type-translations-between-javascript-and-python)
+  * [JavaScript to Python (aka what Python functions receive via parameters)](#javascript-to-python-aka-what-python-functions-receive-via-parameters)
+  * [Python to JavaScript (aka what Python functions return)](#python-to-javascript-aka-what-python-functions-return)
+* [File system](#file-system)
+  * [Upload files to the file system](#upload-files-to-the-file-system)
+  * [Download files from the file system](#download-files-from-the-file-system)
+
 ## Loading Pyodide and running Python code
 HTML:
 ```html
@@ -190,7 +204,7 @@ def call_function(obj):
 * immutable types: see [implicit conversions](https://pyodide.org/en/stable/usage/type-conversions.html#python-to-javascript)
 * mutable types: see [explicit conversion of proxies](https://pyodide.org/en/stable/usage/type-conversions.html#type-translations-pyproxy-to-js)
 
-#### Example for explicit conversion (array)
+#### Example for explicit conversion (dict to Map)
 ```javascript
 async function doSomething() {
     proxy = (await pyodidePromise).runPython("create_py_dict")();
@@ -284,4 +298,37 @@ async function downloadFile() {
     document.body.removeChild(a);
 }
 downloadFile();
+```
+
+## Plotting
+### matplotlib
+The package [matplotlib-pyodide](https://github.com/pyodide/matplotlib-pyodide) is automatically loaded when loading *matplotlib* via micropip.
+
+HTML:
+```html
+<div id="plotTarget"></div>
+```
+
+JavaScript:
+```javascript
+async function plot() {
+    (await pyodidePromise).runPython("plot")("plotTarget");
+}
+plot();
+```
+
+Python:
+```python
+from js import document
+import matplotlib.pyplot as plt
+
+
+def plot(target):
+    document.pyodideMplTarget = document.getElementById(target)
+
+    #  from https://matplotlib.org/stable/users/explain/quick_start.html#a-simple-example
+    fig, ax = plt.subplots()
+    ax.plot([1, 2, 3, 4], [1, 4, 2, 3])
+
+    plt.show()
 ```
