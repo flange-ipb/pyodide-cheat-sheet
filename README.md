@@ -214,3 +214,74 @@ def create_py_dict():
 def create_js_map():
     return to_js({i : i * i * i for i in range(10)})
 ```
+
+## File system
+`pyodide.FS` is an alias to [Emscripten's File System API](https://emscripten.org/docs/api_reference/Filesystem-API.html#id2). You can for instance find out that */home/pyodide* is current working directory via `pyodide.FS.cwd()`.
+
+### Upload files to the file system
+HTML:
+```html
+<input type="file" id="fileupload" />
+<button onclick="uploadFile()">Upload file</button>
+```
+
+JavaScript:
+```javascript
+async function uploadFile() {
+    const file = document.getElementById("fileupload").files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.fileName = file.name;
+    reader.onload = async (event) => {
+        const reader = event.target;
+        const data = new Uint8Array(reader.result);
+
+        const pyodide = await pyodidePromise;
+        pyodide.FS.writeFile(reader.fileName, data);
+        pyodide.runPython("print_file")(reader.fileName);
+    }
+    reader.readAsArrayBuffer(file);
+}
+```
+
+Python:
+```python
+def print_file(file_name):
+    with open(file_name, "r") as f:
+        print(f"Reading from {file_name}")
+        while line := f.readline():
+            print(line)
+```
+
+### Download files from the file system
+Python:
+```python
+def create_file():
+    file_name = "text.txt"
+    with open(file_name, "w") as f:
+        for i in range(100):
+            print(f"{i},{i*i}", file=f)
+
+    return file_name
+```
+
+JavaScript:
+```javascript
+async function downloadFile() {
+    pyodide = await pyodidePromise;
+    fileName = pyodide.runPython("create_file")();
+
+    // from https://stackoverflow.com/a/54468787
+    const content = pyodide.FS.readFile(fileName);
+    const a = document.createElement('a');
+    a.download = fileName;
+    a.href = URL.createObjectURL(new Blob([content], { type: "application/octet-stream" }));
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    URL.revokeObjectURL(a.href);
+    document.body.removeChild(a);
+}
+downloadFile();
+```
