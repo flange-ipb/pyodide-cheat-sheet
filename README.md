@@ -16,7 +16,7 @@ A collection of useful code snippets for application development with [Pyodide](
   * [Download files from the file system](#download-files-from-the-file-system)
 * [Plotting](#plotting)
   * [matplotlib](#matplotlib)
-  * [plotly (not working)](#plotly-not-working)
+  * [plotly](#plotly)
 
 ## Loading Pyodide and running Python code
 HTML:
@@ -336,11 +336,17 @@ def plot(target):
     plt.show()
 ```
 
-### plotly (not working)
+### plotly
 Load *plotly* and *pandas* via micropip.
 
 HTML:
 ```html
+<head>
+    ...
+    <script src="https://cdn.plot.ly/plotly-2.30.0.min.js" charset="utf-8"></script>
+    ...
+</head>
+...
 <div id="plotTarget"></div>
 ```
 
@@ -380,5 +386,3 @@ def render_plot(container, plot_html):
     container.appendChild(document_fragment)
     container.style = "width: 100%; height: 350px; overflow-y: scroll;"
 ```
-
-Drops out with `ReferenceError: Plotly is not defined`. :cry:
