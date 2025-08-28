@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>pyodide-cheat-sheet: Loading Pyodide and running Python code</title>
+	<script src="https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js"></script>
+  </head>
+  <body>
+    <p><a href=".">Back to index</a></p>
+    <h1>Loading Pyodide and running Python code</h1>
+    <p>This page loads Pyodide and logs "Hello World!" on the browser console.</p>
+    <p>Hit F12 and select the console to inspect it.</p>
+    <script>
+      const pyodidePromise = loadPyodide();
+
+      async function helloWorld() {
+        const pyodide = await pyodidePromise;
+
+        pyodide.runPython("print('Hello World!')");
+      }
+      helloWorld();
+    </script>
+  </body>
+</html>

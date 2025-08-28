@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>pyodide-cheat-sheet: Download files from the file system</title>
+	<script src="https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js"></script>
+  </head>
+  <body>
+    <p><a href=".">Back to index</a></p>
+    <h1>Download files from the file system</h1>
+    <button onclick="downloadFile()">Download file</button>
+    <script>
+      const pyodidePromise = loadPyodide();
+
+      async function loadPythonCode() {
+        (await pyodidePromise).runPython(`
+          def create_file():
+            file_name = "square_numbers.txt"
+            with open(file_name, "w") as f:
+              for i in range(100):
+                print(f"{i},{i*i}", file=f)
+
+            return file_name
+        `);
+      }
+      loadPythonCode();
+
+      async function downloadFile() {
+        pyodide = await pyodidePromise;
+        fileName = pyodide.runPython("create_file")();
+
+        // from https://stackoverflow.com/a/54468787
+        const content = pyodide.FS.readFile(fileName);
+        const a = document.createElement('a');
+        a.download = fileName;
+        a.href = URL.createObjectURL(new Blob([content], { type: "application/octet-stream" }));
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        URL.revokeObjectURL(a.href);
+        document.body.removeChild(a);
+      }
+    </script>
+  </body>
+</html>

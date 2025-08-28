@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>pyodide-cheat-sheet: Type translations - JavaScript to Python</title>
+	<script src="https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js"></script>
+  </head>
+  <body>
+    <p><a href=".">Back to index</a></p>
+    <h1>Type translations - JavaScript to Python</h1>
+    <p>This page demonstrates type translations with mutable JavaScript types. Outputs are logged on the browser console.</p>
+    <p>Hit F12 and select the console to inspect it.</p>
+    <script>
+      const pyodidePromise = loadPyodide();
+
+      async function loadPythonCode() {
+        (await pyodidePromise).runPython(`
+          def change_array(s: str, i: int, array: list):
+            print(f"{s=} {i=} {array=}")
+
+            array[2] = i
+            array.append(s)
+
+          def call_function(obj):
+            obj.log(obj.data)
+        `);
+      }
+      loadPythonCode();
+
+      async function doSomething() {
+        const pyodide = await pyodidePromise;
+
+        array = ["a", "b", "c", "d"];
+        console.log("Array before: ", array);
+        pyodide.runPython("change_array")("1234", 42, array);
+        console.log("Array after: ", array);
+
+        obj = {
+          data: "Hello World!",
+          log: s => console.log(s)
+        };
+        pyodide.runPython("call_function")(obj);
+      }
+      doSomething();
+    </script>
+  </body>
+</html>

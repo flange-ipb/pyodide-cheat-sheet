@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>pyodide-cheat-sheet: Returning the result of a Python expression</title>
+	<script src="https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js"></script>
+  </head>
+  <body>
+    <p><a href=".">Back to index</a></p>
+    <h1>Returning the result of a Python expression</h1>
+    <p>This page logs the result of the Python expression <code>int('101010', 2)</code> (decimal representation of the binary number <code>101010</code>) on the browser console.</p>
+    <p>Hit F12 and select the console to inspect it.</p>
+    <script>
+      const pyodidePromise = loadPyodide();
+
+      async function logDecimalNumber() {
+        const pyodide = await pyodidePromise;
+
+        answer = pyodide.runPython("int('101010', 2)");
+        console.log("Answer is:", answer);
+      }
+      logDecimalNumber();
+    </script>
+  </body>
+</html>

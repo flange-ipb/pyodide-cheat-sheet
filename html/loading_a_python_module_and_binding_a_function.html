@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>pyodide-cheat-sheet: Loading a Python module and binding a function</title>
+	<script src="https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js"></script>
+  </head>
+  <body>
+    <p><a href=".">Back to index</a></p>
+    <h1>Loading a Python module and binding a function</h1>
+    <p>This page loads a Python module (<a href="module1.py">module1.py</a>), binds the Python function <code>greeting</code> and executes with and without the <code>name</code> parameter.</p>
+    <p>Hit F12 and select the console to inspect its <code>print()</code> output.</p>
+    <script>
+      const pyodidePromise = startPyodide();
+
+      async function startPyodide() {
+        const pyodide = await loadPyodide();
+        await loadPyModule("module1.py", pyodide);
+        return pyodide;
+      }
+
+      async function loadPyModule(name, pyodide) {
+        const response = await fetch(name);
+        const code = await response.text();
+        return pyodide.runPythonAsync(code);
+      }
+
+      async function greet() {
+        const greetingFunction = (await pyodidePromise).runPython("greeting");
+        greetingFunction("John Doe");
+        greetingFunction();
+      }
+      greet();
+    </script>
+  </body>
+</html>

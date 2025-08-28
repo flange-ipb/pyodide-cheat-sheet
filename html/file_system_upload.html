@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>pyodide-cheat-sheet: Upload files to the file system</title>
+	<script src="https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js"></script>
+  </head>
+  <body>
+    <p><a href=".">Back to index</a></p>
+    <h1>Upload files to the file system</h1>
+    <p>On this page a (text) file can be uploaded. Its content is printed on the browser console.</p>
+    <p>Hit F12 and select the console to inspect it.</p>
+    <input type="file" id="fileupload" />
+    <button onclick="uploadFile()">Upload file</button>
+    <script>
+      const pyodidePromise = loadPyodide();
+
+      async function loadPythonCode() {
+        (await pyodidePromise).runPython(`
+          def print_file(file_name):
+            with open(file_name, "r") as f:
+              print(f"Reading from file {file_name}")
+              while line := f.readline():
+                print(line)
+        `);
+      }
+      loadPythonCode();
+
+      async function uploadFile() {
+        const file = document.getElementById("fileupload").files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.fileName = file.name;
+        reader.onload = async (event) => {
+          const reader = event.target;
+          const data = new Uint8Array(reader.result);
+
+          const pyodide = await pyodidePromise;
+          pyodide.FS.writeFile(reader.fileName, data);
+          pyodide.runPython("print_file")(reader.fileName);
+        }
+        reader.readAsArrayBuffer(file);
+      }
+    </script>
+  </body>
+</html>

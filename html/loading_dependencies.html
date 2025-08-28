@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>pyodide-cheat-sheet: Loading dependencies</title>
+	<script src="https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js"></script>
+  </head>
+  <body>
+    <p><a href=".">Back to index</a></p>
+    <h1>Loading dependencies</h1>
+    <p>This page loads NumPy and RDFLib via micropip and executes the functions from the Python module <a href="module2.py">module2.py</a>.</p>
+    <p>Hit F12 and select the console to inspect its <code>print()</code> output.</p>
+    <script>
+      const pyodidePromise = startPyodide();
+
+      async function startPyodide() {
+        const pyodide = await loadPyodide();
+
+        await pyodide.loadPackage("micropip");
+        const micropip = pyodide.pyimport("micropip");
+        await micropip.install(["numpy", "rdflib"]);
+
+        await loadPyModule("module2.py", pyodide);
+        return pyodide;
+      }
+
+      async function loadPyModule(name, pyodide) {
+        const response = await fetch(name);
+        const code = await response.text();
+        return pyodide.runPythonAsync(code);
+      }
+
+      async function doSomething() {
+        const pyodide = await pyodidePromise;
+
+        pyodide.runPython("calc_det")();
+        graphInTurtleFormat = pyodide.runPython("serialize_graph")();
+        console.log(graphInTurtleFormat);
+      }
+      doSomething();
+    </script>
+  </body>
+</html>

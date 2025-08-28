@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>pyodide-cheat-sheet: Interaction with the BOM</title>
+	<script src="https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js"></script>
+  </head>
+  <body>
+    <p><a href=".">Back to index</a></p>
+    <h1>Interaction with the BOM</h1>
+    <button onclick="showAlertBox()">Show alert box</button>
+    <script>
+      const pyodidePromise = loadPyodide();
+
+      async function showAlertBox() {
+        const pyodide = await pyodidePromise;
+
+        pyodide.runPython(`
+          from js import window
+
+          def do_something():
+            location = window.location.href
+            width = window.screen.width
+            height = window.screen.height
+
+            window.alert(f"Welcome to {location}! Your screen size is {width}x{height}.")
+
+          do_something
+        `)();
+      }
+    </script>
+  </body>
+</html>

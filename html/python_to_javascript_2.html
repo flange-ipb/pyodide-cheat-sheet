@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>pyodide-cheat-sheet: Type translations - Python to JavaScript, example 2</title>
+	<script src="https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js"></script>
+  </head>
+  <body>
+    <p><a href=".">Back to index</a></p>
+    <h1>Type translations - Python to JavaScript, example 2</h1>
+    <p>This page demonstrates type translations with mutable types. Outputs are logged on the browser console.</p>
+    <p>Hit F12 and select the console to inspect it.</p>
+    <script>
+      const pyodidePromise = loadPyodide();
+
+      async function loadPythonCode() {
+        (await pyodidePromise).runPython(`
+          from pyodide.ffi import to_js
+
+          def create_py_dict():
+            return {i : i*i for i in range(10)}
+
+          def create_js_map():
+            return to_js({i : i * i * i for i in range(10)})
+        `);
+      }
+      loadPythonCode();
+
+      async function doSomething() {
+        const pyodide = await pyodidePromise;
+
+        proxy = pyodide.runPython("create_py_dict")();
+        console.log("Map from create_py_dict(): ", proxy.toJs());
+
+        map = pyodide.runPython("create_js_map")();
+        console.log("Map from create_js_map(): ", map);
+      }
+      doSomething();
+    </script>
+  </body>
+</html>

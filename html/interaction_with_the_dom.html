@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>pyodide-cheat-sheet: Interaction with the DOM</title>
+	<script src="https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js"></script>
+  </head>
+  <body>
+    <p><a href=".">Back to index</a></p>
+    <h1>Interaction with the DOM</h1>
+    <button onclick="manipulateDOM()">Append HTML element to body</button>
+    <script>
+      const pyodidePromise = loadPyodide();
+
+      async function manipulateDOM() {
+        const pyodide = await pyodidePromise;
+
+        pyodide.runPython(`
+          from js import document
+
+          def hello_world():
+            h1 = document.createElement("h1")
+            h1.innerText = "Hello World!"
+            h1.style.color = "green"
+            document.body.appendChild(h1)
+        `);
+        pyodide.runPython("hello_world")();
+      }
+    </script>
+  </body>
+</html>
