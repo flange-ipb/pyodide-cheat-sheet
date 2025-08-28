@@ -207,6 +207,41 @@ def call_function(obj):
 * immutable types: see [implicit conversions](https://pyodide.org/en/stable/usage/type-conversions.html#python-to-javascript)
 * mutable types: see [explicit conversion of proxies](https://pyodide.org/en/stable/usage/type-conversions.html#type-translations-pyproxy-to-js)
 
+#### Example for passing mutable Python types (analogous to [previous example](#example-for-passing-mutable-javascript-types))
+Python:
+```python
+def do_something(change_array_fn, call_function_fn):
+    array = ["a", "b", "c", "d"]
+    print(f"Array before: {array=}")
+    change_array_fn("1234", 42, array)
+    print(f"Array after: {array=}")
+
+    obj = {
+        "data": "Hello World!",
+        "log": lambda s: print(s),
+    }
+    call_function_fn(obj)
+```
+
+JavaScript:
+```javascript
+async function run() {
+    function changeArray(s, i, array) {
+        console.log("s=", s, "i=", i, "array=", array.toJs());
+
+        array[2] = i;
+        array.push(s);
+    }
+
+    function callFunction(obj) {
+        obj.log(obj.data);
+    }
+
+    (await pyodidePromise).runPython("do_something")(changeArray, callFunction);
+}
+run();
+```
+
 #### Example for explicit conversion (dict to Map)
 ```javascript
 async function doSomething() {
