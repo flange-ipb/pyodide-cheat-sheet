@@ -24,15 +24,17 @@ HTML:
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+        <script src="https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js"></script>
     </head>
     <body>
         <script>
             const pyodidePromise = loadPyodide();
 
             async function helloWorld() {
-                // logs "Hello World" on the JavaScript console
-                (await pyodidePromise).runPython("print('Hello World')");
+                const pyodide = await pyodidePromise;
+
+                // logs "Hello World!" on the browser console
+                pyodide.runPython("print('Hello World!')");
             }
             helloWorld();
         </script>
@@ -43,12 +45,12 @@ HTML:
 ## Returning the result of a Python expression
 JavaScript:
 ```javascript
-answer = (await pyodidePromise).runPython("int('101010', 2)");
+answer = pyodide.runPython("int('101010', 2)");
 console.log("Answer is:", answer);
 ```
 
 ## Loading a Python module and binding a function
-Python (*module.py*):
+Python (*module1.py*):
 ```python
 def greeting(name="unknown person"):
     print(f"Hello {name}!")
@@ -60,7 +62,7 @@ const pyodidePromise = startPyodide();
 
 async function startPyodide() {
     const pyodide = await loadPyodide();
-    await loadPyModule("module.py", pyodide);
+    await loadPyModule("module1.py", pyodide);
     return pyodide;
 }
 
@@ -78,41 +80,12 @@ async function greet() {
 greet();
 ```
 
-Alternative: You can also [fetch and unpack an entire archive to the in-browser file system](https://pyodide.org/en/stable/usage/faq.html#how-can-i-load-external-files-in-pyodide) and [apply `pyodide.pyimport()`](https://pyodide.org/en/stable/usage/loading-custom-python-code.html#loading-then-importing-python-code).
+Alternative: You can also [fetch and unpack an entire archive to the in-browser file system](https://pyodide.org/en/stable/usage/accessing-files.html#downloading-external-archives) and [apply `pyodide.pyimport()`](https://pyodide.org/en/stable/usage/loading-custom-python-code.html#loading-then-importing-python-code).
 
 ## Loading dependencies
 Pyodide offers a lightweight package installer called *micropip* that supports loading of [packages built in Pyodide](https://pyodide.org/en/stable/usage/packages-in-pyodide.html) and pure Python wheels from PyPI (file name ends with `-py3-none-any.whl`).
 
-JavaScript:
-```javascript
-const pyodidePromise = startPyodide();
-
-async function startPyodide() {
-    const pyodide = await loadPyodide();
-
-    await pyodide.loadPackage("micropip");
-    const micropip = pyodide.pyimport("micropip");
-    await micropip.install(["numpy", "rdflib"]);
-
-    await loadPyModule("module.py", pyodide);
-    return pyodide;
-}
-
-async function loadPyModule(name, pyodide) {
-    const response = await fetch(name);
-    const code = await response.text();
-    return pyodide.runPythonAsync(code);
-}
-
-async function doSomething() {
-    (await pyodidePromise).runPython("calc_det")();
-    graphInTurtleFormat = (await pyodidePromise).runPython("serialize_graph")();
-    console.log(graphInTurtleFormat);
-}
-doSomething();
-```
-
-Python (*module.py*):
+Python (*module2.py*):
 ```python
 import numpy as np
 from rdflib import Graph, URIRef, Literal
@@ -135,6 +108,35 @@ def serialize_graph():
     g.add((alice, FOAF.knows, bob))
 
     return g.serialize()
+```
+
+JavaScript:
+```javascript
+const pyodidePromise = startPyodide();
+
+async function startPyodide() {
+    const pyodide = await loadPyodide();
+
+    await pyodide.loadPackage("micropip");
+    const micropip = pyodide.pyimport("micropip");
+    await micropip.install(["numpy", "rdflib"]);
+
+    await loadPyModule("module2.py", pyodide);
+    return pyodide;
+}
+
+async function loadPyModule(name, pyodide) {
+    const response = await fetch(name);
+    const code = await response.text();
+    return pyodide.runPythonAsync(code);
+}
+
+async function doSomething() {
+    (await pyodidePromise).runPython("calc_det")();
+    graphInTurtleFormat = (await pyodidePromise).runPython("serialize_graph")();
+    console.log(graphInTurtleFormat);
+}
+doSomething();
 ```
 
 ## Interaction with the DOM (Document Object Model)
@@ -165,7 +167,7 @@ def do_something():
     width = window.screen.width
     height = window.screen.height
 
-    window.alert(f"Welcome to {location}! Your window size is {width}x{height}.")
+    window.alert(f"Welcome to {location}! Your screen size is {width}x{height}.")
 ```
 
 ## Type translations between JavaScript and Python
@@ -173,19 +175,22 @@ def do_something():
 * immutable types: see [implicit conversions](https://pyodide.org/en/stable/usage/type-conversions.html#javascript-to-python)
 * mutable types: see [explicit conversion of proxies](https://pyodide.org/en/stable/usage/type-conversions.html#type-translations-jsproxy-to-py)
 
-#### Example
+#### Example for passing mutable JavaScript types
+JavaScript:
 ```javascript
 async function doSomething() {
+    const pyodide = await pyodidePromise;
+
     array = ["a", "b", "c", "d"];
     console.log("Array before: ", array);
-    (await pyodidePromise).runPython("change_array")("1234", 42, array);
+    pyodide.runPython("change_array")("1234", 42, array);
     console.log("Array after: ", array);
 
     obj = {
-        data: "Hello World",
-        log: (s) => console.log(s),
+        data: "Hello World!",
+        log: s => console.log(s)
     };
-    (await pyodidePromise).runPython("call_function")(obj);
+    pyodide.runPython("call_function")(obj);
 }
 doSomething();
 ```
@@ -243,6 +248,7 @@ run();
 ```
 
 #### Example for explicit conversion (dict to Map)
+JavaScript:
 ```javascript
 async function doSomething() {
     proxy = (await pyodidePromise).runPython("create_py_dict")();
@@ -310,7 +316,7 @@ def print_file(file_name):
 Python:
 ```python
 def create_file():
-    file_name = "text.txt"
+    file_name = "square_numbers.txt"
     with open(file_name, "w") as f:
         for i in range(100):
             print(f"{i},{i*i}", file=f)
@@ -340,7 +346,7 @@ downloadFile();
 
 ## Plotting
 ### matplotlib
-The package [matplotlib-pyodide](https://github.com/pyodide/matplotlib-pyodide) is automatically loaded when loading *matplotlib* via micropip.
+Load *matplotlib* via micropip.
 
 HTML:
 ```html
@@ -362,6 +368,7 @@ import matplotlib.pyplot as plt
 
 
 def plot(target):
+    #  see https://github.com/pyodide/matplotlib-pyodide?tab=readme-ov-file#usage
     document.pyodideMplTarget = document.getElementById(target)
 
     #  from https://matplotlib.org/stable/users/explain/quick_start.html#a-simple-example
@@ -378,7 +385,7 @@ HTML:
 ```html
 <head>
     ...
-    <script src="https://cdn.plot.ly/plotly-2.30.0.min.js" charset="utf-8"></script>
+    <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" charset="utf-8"></script>
     ...
 </head>
 ...
@@ -406,7 +413,7 @@ def plot(target):
     fig_html = fig.to_html(
         include_plotlyjs=False,
         full_html=False,
-        default_height='350px'
+        default_height='350px',
     )
     render_plot(plot_output, fig_html)
 
