@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>pyodide-cheat-sheet: HTTP requests with libraries</title>
+	<script src="https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js"></script>
+  </head>
+  <body>
+    <p><a href=".">Back to index</a></p>
+    <h1>HTTP requests with libraries</h1>
+    <p>This page demonstrates the use of HTTP libraries. Outputs are logged on the browser console.</p>
+    <p>Hit F12 and select the console to inspect it.</p>
+    <button onclick="authWithRequests()">GET with basic auth with Requests</button>
+    <button onclick="asyncPostWithHTTPX()">Async POST with HTTPX</button>
+    <button onclick="syncGetWithHTTPXAndScrapingWithBs4()">Sync GET with HTTPX and scraping with BeautifulSoup</button>
+    <button onclick="asyncGetWithAiohttp()">Async GET with aiohttp (not working)</button>
+    <script>
+      const pyodidePromise = startPyodide();
+
+      async function startPyodide() {
+        const pyodide = await loadPyodide();
+
+        await pyodide.loadPackage("micropip");
+        const micropip = pyodide.pyimport("micropip");
+        await micropip.install(["requests", "httpx", "aiohttp", "ssl", "beautifulsoup4"]);
+
+        pyodide.runPython(`
+          import aiohttp
+          import httpx
+          import requests
+          from bs4 import BeautifulSoup
+          from pyodide.ffi import to_js
+
+
+          def auth_with_requests():
+            r = requests.get("https://httpbin.org/basic-auth/user1/mypassword", auth=("user1", "mypassword"))
+            print(r.status_code)
+            print(r.text)
+
+
+          async def async_post_with_httpx():
+            headers = {
+              "custom-header": "my header",
+              "user-agent": "abcde",  # This header is overridden by the browser.
+            }
+            post_data = {
+              "message": "Hello World!",
+            }
+
+            async with httpx.AsyncClient() as client:
+              r = await client.post("https://httpbin.org/post", headers=headers, data=post_data)
+              data = r.raise_for_status().json()
+
+              return to_js(data["form"]), data["headers"]["User-Agent"], data["headers"]["Custom-Header"], data["origin"]
+
+
+          def sync_get_with_httpx_and_scraping_with_bs4(base_path):
+            html = httpx.get(base_path).text
+            soup = BeautifulSoup(html)
+            print(soup.get_text())
+
+
+          async def async_get_with_aiohttp():
+            async with aiohttp.ClientSession() as session:
+              async with session.get("https://httpbin.org/html") as response:
+                html = await response.text()
+                print(html)
+        `);
+
+        return pyodide;
+      }
+
+      async function authWithRequests() {
+        (await pyodidePromise).runPython("auth_with_requests")();
+      }
+
+      async function asyncPostWithHTTPX() {
+        [form, userAgent, customHeader, origin] = await (await pyodidePromise).runPythonAsync("async_post_with_httpx()");
+
+        console.log("form:", form);
+        console.log("user agent:", userAgent);
+        console.log("custom header:", customHeader)
+        console.log("origin:", origin);
+      }
+
+      async function syncGetWithHTTPXAndScrapingWithBs4() {
+        const basePath = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+        (await pyodidePromise).runPython("sync_get_with_httpx_and_scraping_with_bs4")(basePath);
+      }
+
+      async function asyncGetWithAiohttp() {
+        await (await pyodidePromise).runPython("async_get_with_aiohttp")();
+      }
+    </script>
+  </body>
+</html>

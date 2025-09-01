@@ -17,6 +17,7 @@ A collection of useful code snippets for application development with [Pyodide](
 * [Plotting](#plotting)
   * [matplotlib](#matplotlib)
   * [plotly](#plotly)
+* [HTTP requests with libraries](#http-requests-with-libraries)
 
 ## Loading Pyodide and running Python code
 HTML:
@@ -428,3 +429,6 @@ def render_plot(container, plot_html):
   container.appendChild(document_fragment)
   container.style = "width: 100%; height: 350px; overflow-y: scroll;"
 ```
+
+## HTTP requests with libraries
+*requests*, *httpx*, *aiohttp*, etc. can be loaded via micropip. The *ssl* package may be required additionally. *aiohttp* does not seem to work at the moment (see [pyodide#5239](https://github.com/pyodide/pyodide/issues/5239)). 
