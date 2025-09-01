@@ -23,22 +23,22 @@ HTML:
 ```html
 <!DOCTYPE html>
 <html>
-    <head>
-        <script src="https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js"></script>
-    </head>
-    <body>
-        <script>
-            const pyodidePromise = loadPyodide();
+  <head>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js"></script>
+  </head>
+  <body>
+    <script>
+      const pyodidePromise = loadPyodide();
 
-            async function helloWorld() {
-                const pyodide = await pyodidePromise;
+      async function helloWorld() {
+        const pyodide = await pyodidePromise;
 
-                // logs "Hello World!" on the browser console
-                pyodide.runPython("print('Hello World!')");
-            }
-            helloWorld();
-        </script>
-    </body>
+        // logs "Hello World!" on the browser console
+        pyodide.runPython("print('Hello World!')");
+      }
+      helloWorld();
+    </script>
+  </body>
 </html>
 ```
 
@@ -53,7 +53,7 @@ console.log("Answer is:", answer);
 Python (*module1.py*):
 ```python
 def greeting(name="unknown person"):
-    print(f"Hello {name}!")
+  print(f"Hello {name}!")
 ```
 
 JavaScript:
@@ -61,21 +61,21 @@ JavaScript:
 const pyodidePromise = startPyodide();
 
 async function startPyodide() {
-    const pyodide = await loadPyodide();
-    await loadPyModule("module1.py", pyodide);
-    return pyodide;
+  const pyodide = await loadPyodide();
+  await loadPyModule("module1.py", pyodide);
+  return pyodide;
 }
 
 async function loadPyModule(name, pyodide) {
-    const response = await fetch(name);
-    const code = await response.text();
-    return pyodide.runPythonAsync(code);
+  const response = await fetch(name);
+  const code = await response.text();
+  return pyodide.runPythonAsync(code);
 }
 
 async function greet() {
-    const greetingFunction = (await pyodidePromise).runPython("greeting");
-    greetingFunction("John Doe");
-    greetingFunction();
+  const greetingFunction = (await pyodidePromise).runPython("greeting");
+  greetingFunction("John Doe");
+  greetingFunction();
 }
 greet();
 ```
@@ -93,21 +93,21 @@ from rdflib.namespace import FOAF
 
 
 def calc_det():
-    a = np.array([[1, 2], [3, 4]])
-    print(f"Determinant is {np.linalg.det(a)}")
+  a = np.array([[1, 2], [3, 4]])
+  print(f"Determinant is {np.linalg.det(a)}")
 
 
 def serialize_graph():
-    g = Graph()
+  g = Graph()
 
-    alice = URIRef("http://example.org/alice")
-    bob = URIRef("http://example.org/bob")
+  alice = URIRef("http://example.org/alice")
+  bob = URIRef("http://example.org/bob")
 
-    g.add((alice, FOAF.name, Literal("Alice")))
-    g.add((bob, FOAF.name, Literal("Bob")))
-    g.add((alice, FOAF.knows, bob))
+  g.add((alice, FOAF.name, Literal("Alice")))
+  g.add((bob, FOAF.name, Literal("Bob")))
+  g.add((alice, FOAF.knows, bob))
 
-    return g.serialize()
+  return g.serialize()
 ```
 
 JavaScript:
@@ -115,26 +115,26 @@ JavaScript:
 const pyodidePromise = startPyodide();
 
 async function startPyodide() {
-    const pyodide = await loadPyodide();
+  const pyodide = await loadPyodide();
 
-    await pyodide.loadPackage("micropip");
-    const micropip = pyodide.pyimport("micropip");
-    await micropip.install(["numpy", "rdflib"]);
+  await pyodide.loadPackage("micropip");
+  const micropip = pyodide.pyimport("micropip");
+  await micropip.install(["numpy", "rdflib"]);
 
-    await loadPyModule("module2.py", pyodide);
-    return pyodide;
+  await loadPyModule("module2.py", pyodide);
+  return pyodide;
 }
 
 async function loadPyModule(name, pyodide) {
-    const response = await fetch(name);
-    const code = await response.text();
-    return pyodide.runPythonAsync(code);
+  const response = await fetch(name);
+  const code = await response.text();
+  return pyodide.runPythonAsync(code);
 }
 
 async function doSomething() {
-    (await pyodidePromise).runPython("calc_det")();
-    graphInTurtleFormat = (await pyodidePromise).runPython("serialize_graph")();
-    console.log(graphInTurtleFormat);
+  (await pyodidePromise).runPython("calc_det")();
+  graphInTurtleFormat = (await pyodidePromise).runPython("serialize_graph")();
+  console.log(graphInTurtleFormat);
 }
 doSomething();
 ```
@@ -148,10 +148,10 @@ from js import document
 
 
 def hello_world():
-    h1 = document.createElement("h1")
-    h1.innerText = "Hello World!"
-    h1.style.color = "green"
-    document.body.appendChild(h1)
+  h1 = document.createElement("h1")
+  h1.innerText = "Hello World!"
+  h1.style.color = "green"
+  document.body.appendChild(h1)
 ```
 
 ## Interaction with the BOM (Browser Object Model)
@@ -163,11 +163,11 @@ from js import window
 
 
 def do_something():
-    location = window.location.href
-    width = window.screen.width
-    height = window.screen.height
+  location = window.location.href
+  width = window.screen.width
+  height = window.screen.height
 
-    window.alert(f"Welcome to {location}! Your screen size is {width}x{height}.")
+  window.alert(f"Welcome to {location}! Your screen size is {width}x{height}.")
 ```
 
 ## Type translations between JavaScript and Python
@@ -179,18 +179,18 @@ def do_something():
 JavaScript:
 ```javascript
 async function doSomething() {
-    const pyodide = await pyodidePromise;
+  const pyodide = await pyodidePromise;
 
-    array = ["a", "b", "c", "d"];
-    console.log("Array before: ", array);
-    pyodide.runPython("change_array")("1234", 42, array);
-    console.log("Array after: ", array);
+  array = ["a", "b", "c", "d"];
+  console.log("Array before: ", array);
+  pyodide.runPython("change_array")("1234", 42, array);
+  console.log("Array after: ", array);
 
-    obj = {
-        data: "Hello World!",
-        log: s => console.log(s)
-    };
-    pyodide.runPython("call_function")(obj);
+  obj = {
+    data: "Hello World!",
+    log: s => console.log(s)
+  };
+  pyodide.runPython("call_function")(obj);
 }
 doSomething();
 ```
@@ -198,14 +198,14 @@ doSomething();
 Python:
 ```python
 def change_array(s: str, i: int, array: list):
-    print(f"{s=} {i=} {array=}")
+  print(f"{s=} {i=} {array=}")
 
-    array[2] = i
-    array.append(s)
+  array[2] = i
+  array.append(s)
 
 
 def call_function(obj):
-    obj.log(obj.data)
+  obj.log(obj.data)
 ```
 
 ### Python to JavaScript (aka what Python functions return)
@@ -216,33 +216,33 @@ def call_function(obj):
 Python:
 ```python
 def do_something(change_array_fn, call_function_fn):
-    array = ["a", "b", "c", "d"]
-    print(f"Array before: {array=}")
-    change_array_fn("1234", 42, array)
-    print(f"Array after: {array=}")
+  array = ["a", "b", "c", "d"]
+  print(f"Array before: {array=}")
+  change_array_fn("1234", 42, array)
+  print(f"Array after: {array=}")
 
-    obj = {
-        "data": "Hello World!",
-        "log": lambda s: print(s),
-    }
-    call_function_fn(obj)
+  obj = {
+    "data": "Hello World!",
+    "log": lambda s: print(s),
+  }
+  call_function_fn(obj)
 ```
 
 JavaScript:
 ```javascript
 async function run() {
-    function changeArray(s, i, array) {
-        console.log("s=", s, "i=", i, "array=", array.toJs());
+  function changeArray(s, i, array) {
+    console.log("s=", s, "i=", i, "array=", array.toJs());
 
-        array[2] = i;
-        array.push(s);
-    }
+    array[2] = i;
+    array.push(s);
+  }
 
-    function callFunction(obj) {
-        obj.log(obj.data);
-    }
+  function callFunction(obj) {
+    obj.log(obj.data);
+  }
 
-    (await pyodidePromise).runPython("do_something")(changeArray, callFunction);
+  (await pyodidePromise).runPython("do_something")(changeArray, callFunction);
 }
 run();
 ```
@@ -251,11 +251,11 @@ run();
 JavaScript:
 ```javascript
 async function doSomething() {
-    proxy = (await pyodidePromise).runPython("create_py_dict")();
-    console.log("Map from create_py_dict(): ", proxy.toJs());
+  proxy = (await pyodidePromise).runPython("create_py_dict")();
+  console.log("Map from create_py_dict(): ", proxy.toJs());
 
-    map = (await pyodidePromise).runPython("create_js_map")();
-    console.log("Map from create_js_map(): ", map);
+  map = (await pyodidePromise).runPython("create_js_map")();
+  console.log("Map from create_js_map(): ", map);
 }
 doSomething();
 ```
@@ -266,11 +266,11 @@ from pyodide.ffi import to_js
 
 
 def create_py_dict():
-    return {i : i*i for i in range(10)}
+  return {i : i*i for i in range(10)}
 
 
 def create_js_map():
-    return to_js({i : i * i * i for i in range(10)})
+  return to_js({i : i * i * i for i in range(10)})
 ```
 
 ## File system
@@ -286,60 +286,60 @@ HTML:
 JavaScript:
 ```javascript
 async function uploadFile() {
-    const file = document.getElementById("fileupload").files[0];
-    if (!file) return;
+  const file = document.getElementById("fileupload").files[0];
+  if (!file) return;
 
-    const reader = new FileReader();
-    reader.fileName = file.name;
-    reader.onload = async (event) => {
-        const reader = event.target;
-        const data = new Uint8Array(reader.result);
+  const reader = new FileReader();
+  reader.fileName = file.name;
+  reader.onload = async (event) => {
+    const reader = event.target;
+    const data = new Uint8Array(reader.result);
 
-        const pyodide = await pyodidePromise;
-        pyodide.FS.writeFile(reader.fileName, data);
-        pyodide.runPython("print_file")(reader.fileName);
-    }
-    reader.readAsArrayBuffer(file);
+    const pyodide = await pyodidePromise;
+    pyodide.FS.writeFile(reader.fileName, data);
+    pyodide.runPython("print_file")(reader.fileName);
+  }
+  reader.readAsArrayBuffer(file);
 }
 ```
 
 Python:
 ```python
 def print_file(file_name):
-    with open(file_name, "r") as f:
-        print(f"Reading from {file_name}")
-        while line := f.readline():
-            print(line)
+  with open(file_name, "r") as f:
+    print(f"Reading from {file_name}")
+    while line := f.readline():
+      print(line)
 ```
 
 ### Download files from the file system
 Python:
 ```python
 def create_file():
-    file_name = "square_numbers.txt"
-    with open(file_name, "w") as f:
-        for i in range(100):
-            print(f"{i},{i*i}", file=f)
+  file_name = "square_numbers.txt"
+  with open(file_name, "w") as f:
+    for i in range(100):
+      print(f"{i},{i*i}", file=f)
 
-    return file_name
+  return file_name
 ```
 
 JavaScript:
 ```javascript
 async function downloadFile() {
-    pyodide = await pyodidePromise;
-    fileName = pyodide.runPython("create_file")();
+  pyodide = await pyodidePromise;
+  fileName = pyodide.runPython("create_file")();
 
-    // from https://stackoverflow.com/a/54468787
-    const content = pyodide.FS.readFile(fileName);
-    const a = document.createElement('a');
-    a.download = fileName;
-    a.href = URL.createObjectURL(new Blob([content], { type: "application/octet-stream" }));
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    URL.revokeObjectURL(a.href);
-    document.body.removeChild(a);
+  // from https://stackoverflow.com/a/54468787
+  const content = pyodide.FS.readFile(fileName);
+  const a = document.createElement('a');
+  a.download = fileName;
+  a.href = URL.createObjectURL(new Blob([content], { type: "application/octet-stream" }));
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  URL.revokeObjectURL(a.href);
+  document.body.removeChild(a);
 }
 downloadFile();
 ```
@@ -356,7 +356,7 @@ HTML:
 JavaScript:
 ```javascript
 async function plot() {
-    (await pyodidePromise).runPython("plot")("plotTarget");
+  (await pyodidePromise).runPython("plot")("plotTarget");
 }
 plot();
 ```
@@ -368,14 +368,14 @@ import matplotlib.pyplot as plt
 
 
 def plot(target):
-    #  see https://github.com/pyodide/matplotlib-pyodide?tab=readme-ov-file#usage
-    document.pyodideMplTarget = document.getElementById(target)
+  #  see https://github.com/pyodide/matplotlib-pyodide?tab=readme-ov-file#usage
+  document.pyodideMplTarget = document.getElementById(target)
 
-    #  from https://matplotlib.org/stable/users/explain/quick_start.html#a-simple-example
-    fig, ax = plt.subplots()
-    ax.plot([1, 2, 3, 4], [1, 4, 2, 3])
+  #  from https://matplotlib.org/stable/users/explain/quick_start.html#a-simple-example
+  fig, ax = plt.subplots()
+  ax.plot([1, 2, 3, 4], [1, 4, 2, 3])
 
-    plt.show()
+  plt.show()
 ```
 
 ### plotly
@@ -384,9 +384,9 @@ Load *plotly* and *pandas* via micropip.
 HTML:
 ```html
 <head>
-    ...
-    <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" charset="utf-8"></script>
-    ...
+  ...
+  <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" charset="utf-8"></script>
+  ...
 </head>
 ...
 <div id="plotTarget"></div>
@@ -395,7 +395,7 @@ HTML:
 JavaScript:
 ```javascript
 async function plot() {
-    (await pyodidePromise).runPython("plot")("plotTarget");
+  (await pyodidePromise).runPython("plot")("plotTarget");
 }
 plot();
 ```
@@ -407,24 +407,24 @@ import plotly.express as px
 
 
 def plot(target):
-    plot_output = document.getElementById(target)
+  plot_output = document.getElementById(target)
 
-    fig = px.bar(x=["a", "b", "c"], y=[1, 3, 2])
-    fig_html = fig.to_html(
-        include_plotlyjs=False,
-        full_html=False,
-        default_height='350px',
-    )
-    render_plot(plot_output, fig_html)
+  fig = px.bar(x=["a", "b", "c"], y=[1, 3, 2])
+  fig_html = fig.to_html(
+    include_plotlyjs=False,
+    full_html=False,
+    default_height='350px',
+  )
+  render_plot(plot_output, fig_html)
 
 
 #  from https://codepen.io/jmsmdy/pen/MWpdjVZ
 def render_plot(container, plot_html):
-    range = document.createRange()
-    range.selectNode(container)
-    document_fragment = range.createContextualFragment(plot_html)
-    while container.hasChildNodes():
-        container.removeChild(container.firstChild)
-    container.appendChild(document_fragment)
-    container.style = "width: 100%; height: 350px; overflow-y: scroll;"
+  range = document.createRange()
+  range.selectNode(container)
+  document_fragment = range.createContextualFragment(plot_html)
+  while container.hasChildNodes():
+    container.removeChild(container.firstChild)
+  container.appendChild(document_fragment)
+  container.style = "width: 100%; height: 350px; overflow-y: scroll;"
 ```
