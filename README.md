@@ -43,12 +43,20 @@ HTML:
 </html>
 ```
 
+Full example:
+* [source code](docs/loading_pyodide_and_running_python_code.html)
+* [live demo](https://flange-ipb.github.io/pyodide-cheat-sheet/loading_pyodide_and_running_python_code.html)
+
 ## Returning the result of a Python expression
 JavaScript:
 ```javascript
 answer = pyodide.runPython("int('101010', 2)");
 console.log("Answer is:", answer);
 ```
+
+Full example:
+* [source code](docs/returning_the_result_of_a_python_expression.html)
+* [live demo](https://flange-ipb.github.io/pyodide-cheat-sheet/returning_the_result_of_a_python_expression.html)
 
 ## Loading a Python module and binding a function
 Python (*module1.py*):
@@ -80,6 +88,10 @@ async function greet() {
 }
 greet();
 ```
+
+Full example:
+* [source code](docs/loading_a_python_module_and_binding_a_function.html)
+* [live demo](https://flange-ipb.github.io/pyodide-cheat-sheet/loading_a_python_module_and_binding_a_function.html)
 
 Alternative: You can also [fetch and unpack an entire archive to the in-browser file system](https://pyodide.org/en/stable/usage/accessing-files.html#downloading-external-archives) and [apply `pyodide.pyimport()`](https://pyodide.org/en/stable/usage/loading-custom-python-code.html#loading-then-importing-python-code).
 
@@ -140,6 +152,10 @@ async function doSomething() {
 doSomething();
 ```
 
+Full example:
+* [source code](docs/loading_dependencies.html)
+* [live demo](https://flange-ipb.github.io/pyodide-cheat-sheet/loading_dependencies.html)
+
 ## Interaction with the DOM (Document Object Model)
 This is very similar to [how it's done in JavaScript](https://www.w3schools.com/js/js_htmldom.asp) with the `document` object.
 
@@ -154,6 +170,10 @@ def hello_world():
   h1.style.color = "green"
   document.body.appendChild(h1)
 ```
+
+Full example:
+* [source code](docs/interaction_with_the_dom.html)
+* [live demo](https://flange-ipb.github.io/pyodide-cheat-sheet/interaction_with_the_dom.html)
 
 ## Interaction with the BOM (Browser Object Model)
 This is very similar to [how it's done in JavaScript](https://www.w3schools.com/js/js_window.asp) with the `window` object.
@@ -170,6 +190,10 @@ def do_something():
 
   window.alert(f"Welcome to {location}! Your screen size is {width}x{height}.")
 ```
+
+Full example:
+* [source code](docs/interaction_with_the_bom.html)
+* [live demo](https://flange-ipb.github.io/pyodide-cheat-sheet/interaction_with_the_bom.html)
 
 ## Type translations between JavaScript and Python
 ### JavaScript to Python (aka what Python functions receive via parameters)
@@ -208,6 +232,10 @@ def change_array(s: str, i: int, array: list):
 def call_function(obj):
   obj.log(obj.data)
 ```
+
+Full example:
+* [source code](docs/javascript_to_python.html)
+* [live demo](https://flange-ipb.github.io/pyodide-cheat-sheet/javascript_to_python.html)
 
 ### Python to JavaScript (aka what Python functions return)
 * immutable types: see [implicit conversions](https://pyodide.org/en/stable/usage/type-conversions.html#python-to-javascript)
@@ -248,6 +276,10 @@ async function run() {
 run();
 ```
 
+Full example:
+* [source code](docs/python_to_javascript_1.html)
+* [live demo](https://flange-ipb.github.io/pyodide-cheat-sheet/python_to_javascript_1.html)
+
 #### Example for explicit conversion (dict to Map)
 JavaScript:
 ```javascript
@@ -273,6 +305,10 @@ def create_py_dict():
 def create_js_map():
   return to_js({i : i * i * i for i in range(10)})
 ```
+
+Full example:
+* [source code](docs/python_to_javascript_2.html)
+* [live demo](https://flange-ipb.github.io/pyodide-cheat-sheet/python_to_javascript_2.html)
 
 ## File system
 `pyodide.FS` is an alias to [Emscripten's File System API](https://emscripten.org/docs/api_reference/Filesystem-API.html#id2). You can for instance find out that */home/pyodide* is current working directory via `pyodide.FS.cwd()`.
@@ -313,6 +349,10 @@ def print_file(file_name):
       print(line)
 ```
 
+Full example:
+* [source code](docs/file_system_upload.html)
+* [live demo](https://flange-ipb.github.io/pyodide-cheat-sheet/file_system_upload.html)
+
 ### Download files from the file system
 Python:
 ```python
@@ -344,6 +384,10 @@ async function downloadFile() {
 }
 downloadFile();
 ```
+
+Full example:
+* [source code](docs/file_system_download.html)
+* [live demo](https://flange-ipb.github.io/pyodide-cheat-sheet/file_system_download.html)
 
 ## Plotting
 ### matplotlib
@@ -379,6 +423,10 @@ def plot(target):
   plt.show()
   plt.close()  # don't plot the same thing the next time show() is called
 ```
+
+Full example (vanilla matplotlib and Seaborn):
+* [source code](docs/plotting_with_matplotlib_and_seaborn.html)
+* [live demo](https://flange-ipb.github.io/pyodide-cheat-sheet/plotting_with_matplotlib_and_seaborn.html)
 
 ### plotly
 Load *plotly* and *pandas* via micropip.
@@ -431,5 +479,13 @@ def render_plot(container, plot_html):
   container.style = "width: 100%; height: 350px; overflow-y: scroll;"
 ```
 
+Full example:
+* [source code](docs/plotting_with_plotly.html)
+* [live demo](https://flange-ipb.github.io/pyodide-cheat-sheet/plotting_with_plotly.html)
+
 ## HTTP requests with libraries
 *requests*, *httpx*, *aiohttp*, etc. can be loaded via micropip. The *ssl* package may be required additionally. *aiohttp* does not seem to work at the moment (see [pyodide#5239](https://github.com/pyodide/pyodide/issues/5239)). 
+
+Full example:
+* [source code](docs/http_requests.html)
+* [live demo](https://flange-ipb.github.io/pyodide-cheat-sheet/http_requests.html)
