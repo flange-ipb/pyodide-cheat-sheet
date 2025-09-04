@@ -377,6 +377,7 @@ def plot(target):
   ax.plot([1, 2, 3, 4], [1, 4, 2, 3])
 
   plt.show()
+  plt.close()  # don't plot the same thing the next time show() is called
 ```
 
 ### plotly

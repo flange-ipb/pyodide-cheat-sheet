@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>pyodide-cheat-sheet: Plotting with matplotlib and Seaborn</title>
+	<script src="https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js"></script>
+  </head>
+  <body>
+    <p><a href=".">Back to index</a></p>
+    <h1>Plotting with matplotlib and Seaborn</h1>
+    <h2>Vanilla matplotlib</h2>
+    <div id="plotTarget1"></div>
+    <h2>Seaborn</h2>
+    <div id="plotTarget2"></div>
+    <script>
+      const pyodidePromise = startPyodide();
+
+      async function startPyodide() {
+        const pyodide = await loadPyodide();
+
+        await pyodide.loadPackage("micropip");
+        const micropip = pyodide.pyimport("micropip");
+        await micropip.install(["matplotlib", "seaborn"]);
+
+        pyodide.runPython(`
+          from js import document
+          import matplotlib.pyplot as plt
+
+          def plot_with_matplotlib(target):
+            #  see https://github.com/pyodide/matplotlib-pyodide?tab=readme-ov-file#usage
+            document.pyodideMplTarget = document.getElementById(target)
+
+            #  from https://matplotlib.org/stable/users/explain/quick_start.html#a-simple-example
+            fig, ax = plt.subplots()
+            ax.plot([1, 2, 3, 4], [1, 4, 2, 3])
+
+            plt.show()
+            plt.close()  # don't plot the same thing the next time show() is called
+
+
+          async def plot_with_seaborn(target):
+            document.pyodideMplTarget = document.getElementById(target)
+
+            # example based on https://seaborn.pydata.org/installing.html#quickstart
+            import seaborn as sns
+            import pandas as pd
+
+            # This won't work because Pyodide does not support downloads via WebSockets.
+            #df = sns.load_dataset("penguins")
+
+            dataset_url = "https://raw.githubusercontent.com/mwaskom/seaborn-data/refs/heads/master/penguins.csv"
+            # Won't work either ...
+            #df = pd.read_csv(dataset_url)
+
+            # ... instead we use JS's fetch function to download the csv.
+            from js import fetch
+            response = await fetch(dataset_url)
+            csv = await response.text()
+
+            from io import StringIO
+            df = pd.read_csv(StringIO(csv))
+
+            sns.pairplot(df, hue="species")
+
+            plt.show()
+            plt.close()
+        `);
+
+        return pyodide;
+      }
+
+      async function plot() {
+        (await pyodidePromise).runPython("plot_with_matplotlib")("plotTarget1");
+        await (await pyodidePromise).runPython("plot_with_seaborn")("plotTarget2");
+      }
+      plot();
+    </script>
+  </body>
+</html>
